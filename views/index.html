@@ -631,68 +631,54 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const enquiryForm = document.getElementById('enquiryForm');
-    
-    if (enquiryForm) {
-      enquiryForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+  const enquiryForm = document.getElementById('enquiryForm');
+  
+  if (enquiryForm) {
+    enquiryForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        destination: document.getElementById('destination').value,
+        dates: document.getElementById('dates').value
+      };
+      
+      const messageDiv = document.getElementById('formMessage');
+      messageDiv.style.display = 'block';
+      messageDiv.textContent = 'Sending your enquiry...';
+      messageDiv.style.backgroundColor = '#e3f2fd';
+      messageDiv.style.color = '#0c5460';
+      
+      try {
+        const response = await fetch('/send-enquiry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
         
-        const formData = {
-          name: document.getElementById('name').value,
-          phone: document.getElementById('phone').value,
-          email: document.getElementById('email').value,
-          destination: document.getElementById('destination').value,
-          dates: document.getElementById('dates').value
-        };
+        const result = await response.json();
         
-        const messageDiv = document.getElementById('formMessage');
-        messageDiv.style.display = 'block';
-        messageDiv.textContent = 'Sending your enquiry...';
-        messageDiv.style.backgroundColor = '#e3f2fd';
-        messageDiv.style.color = '#0c5460';
-        
-        try {
-          // In a real implementation, this would connect to your backend
-          // For demo purposes, we'll simulate a successful submission
-          setTimeout(() => {
-            messageDiv.textContent = 'Enquiry sent successfully! We will contact you soon.';
-            messageDiv.style.backgroundColor = '#d4edda';
-            messageDiv.style.color = '#155724';
-            
-            // Reset form
-            enquiryForm.reset();
-            
-            // In a real implementation, you would use:
-            /*
-            const response = await fetch('/send-enquiry', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(formData)
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              messageDiv.textContent = 'Enquiry sent successfully! We will contact you soon.';
-              messageDiv.style.backgroundColor = '#d4edda';
-              messageDiv.style.color = '#155724';
-              enquiryForm.reset();
-            } else {
-              throw new Error(result.message);
-            }
-            */
-          }, 1500);
-        } catch (error) {
-          console.error('Error:', error);
-          messageDiv.textContent = 'There was an error sending your enquiry. Please try again or contact us directly.';
-          messageDiv.style.backgroundColor = '#f8d7da';
-          messageDiv.style.color = '#721c24';
+        if (result.success) {
+          messageDiv.textContent = 'Enquiry sent successfully! We will contact you soon.';
+          messageDiv.style.backgroundColor = '#d4edda';
+          messageDiv.style.color = '#155724';
+          enquiryForm.reset();
+        } else {
+          throw new Error(result.message);
         }
-      });
-    }
-  });
+      } catch (error) {
+        console.error('Error:', error);
+        messageDiv.textContent = 'There was an error sending your enquiry. Please try again or contact us directly.';
+        messageDiv.style.backgroundColor = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+      }
+    });
+  }
+});
   
   function scrollToSection(id) {
     const element = document.getElementById(id);
