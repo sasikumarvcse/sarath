@@ -16,8 +16,9 @@ app.use(express.static('public'));
 
 // Serve the main page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
+
 
 // ✅ Corrected Nodemailer config
 const transporter = nodemailer.createTransport({
